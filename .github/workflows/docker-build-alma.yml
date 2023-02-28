@@ -20,7 +20,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ secrets.DOCKER_USERNAME }}/ultraviolet-node
+          images: ${{ secrets.DOCKER_USERNAME }}/pacman
           tags: |
             type=raw,value={{date 'YYYYMMDD'}}
             type=raw,value=latest
