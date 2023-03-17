@@ -15,10 +15,7 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
-      - name: Install wc
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wc
+
       # BUILD
 
       - name: Build Image
@@ -57,7 +54,7 @@ jobs:
       - uses: sigstore/cosign-installer@v3.0.1 
       - name: Sign the images
         run:  |
-          echo ${{ secrets.COSIGN_PRIVATE_KEY }} > cosign.key;
+          echo "${{ env.COSIGN_PRIVATE_KEY }}" > cosign.key;
           wc -c cosign.key;
           cosign sign -y --key cosign.key docker.io/np22jpg/${{ steps.build-image.outputs.image }}@${DOCKER_TAGS};
         env:
