@@ -54,8 +54,9 @@ jobs:
       - uses: sigstore/cosign-installer@v3.0.1 
       - name: Sign the images
         run:  |
-          wc -c env://COSIGN_PRIVATE_KEY
-          cosign sign -y --key env://COSIGN_PRIVATE_KEY docker.io/np22jpg/${{ steps.build-image.outputs.image }}@${DOCKER_TAGS}
+          echo ${{ secrets.COSIGN_PRIVATE_KEY }} > cosign.key
+          wc -c cosign.key
+          cosign sign -y --key cosign.key docker.io/np22jpg/${{ steps.build-image.outputs.image }}@${DOCKER_TAGS}
         env:
           DOCKER_TAGS: ${{ steps.push-to-docker.outputs.digest }}
           COSIGN_EXPERIMENTAL: false
