@@ -1,0 +1,61 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  schedule:
+    - cron: "30 12 * * 0" # Run once every Sunday
+
+jobs:
+  push_to_registry:
+    name: Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
+      # BUILD
+
+      - name: Build Image
+        id: build-image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: pacman-canvas
+          tags: latest
+          containerfiles: |
+            ./docker/Containerfile
+          platforms: linux/amd64,linux/arm64
+
+      # PUSH
+
+      - name: Log in to Docker Hub
+        uses: redhat-actions/podman-login@v1
+        with:
+          username: np22jpg
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: docker.io
+
+      - name: Push To Docker Hub
+        id: push-to-docker
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-image.outputs.image }}
+          tags: ${{ steps.build-image.outputs.tags }}
+          registry: docker.io/np22jpg
+
+      - name: Print image url
+        run:  |
+          echo "Image pushed to ${{ steps.push-to-docker.outputs.registry-paths }}"
+
+      # SIGN
+
+      - uses: sigstore/cosign-installer@v3.0.1 
+      - name: Sign the images
+        run:  |
+          cosign sign -y --key env://COSIGN_PRIVATE_KEY docker.io/np22jpg/${{ steps.build-image.outputs.image }}@${DOCKER_TAGS}
+        env:
+          DOCKER_TAGS: ${{ steps.push-to-docker.outputs.digest }}
+          COSIGN_EXPERIMENTAL: false
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}

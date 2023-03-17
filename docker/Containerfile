@@ -1,64 +1,16 @@
-FROM docker.io/library/node:18-buster AS base
+FROM quay.io/np22-jpg/fedora-npm AS base
 
-RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 COPY package.json ./
 RUN yarn install --production
-COPY ./ ./
+COPY . .
 
-
-FROM quay.io/almalinuxorg/9-minimal:9 AS release
-
-# install runtime deps
-USER 0
-RUN microdnf --assumeyes --nodocs install ca-certificates nodejs
-RUN microdnf clean all
-
-
-# copy files over
-USER 1001
-
+FROM quay.io/np22-jpg/fedora-node AS release
+USER node
 COPY --from=base /usr/src/app/ /app
 WORKDIR /app
-ENV NODE_ENV=production
-
-EXPOSE 8080/tcp
 
 HEALTHCHECK --interval=5s --timeout=3s --start-period=5s \
   CMD curl -f http://localhost:8080
 
-ENTRYPOINT ["node", "src/index.js"]
-
-
-
-FROM docker.io/library/node:18-alpine AS alpine
-
-RUN apk add curl --no-cache
-
-USER 1001
-
-COPY --from=base /usr/src/app/ /app
-WORKDIR /app
-ENV NODE_ENV=production
-
-EXPOSE 8080/tcp
-
-HEALTHCHECK --interval=5s --timeout=3s --start-period=5s \
-  CMD curl -f http://localhost:8080
-
-ENTRYPOINT ["node", "src/index.js"]
-
-
-FROM gcr.io/distroless/nodejs18-debian11 AS debian
-
-USER 1001
-
-COPY --from=base /usr/src/app/ /app
-WORKDIR /app
-ENV NODE_ENV=production
-
-EXPOSE 8080/tcp
-
-HEALTHCHECK NONE
-
-ENTRYPOINT ["node", "src/index.js"]
+ENTRYPOINT ["node", "server.js"]
