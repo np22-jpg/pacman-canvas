@@ -51,10 +51,13 @@ jobs:
 
       # SIGN
 
+      # https://github.com/sigstore/cosign/issues/587#issuecomment-942011691
+      - name: Copy Podman Credentials
+        run:  cat ${XDG_RUNTIME_DIR}/containers/auth.json > ~/.docker/config.json
+      
       - uses: sigstore/cosign-installer@v3.0.1 
       - name: Sign the images
         run:  |
-          cosign login docker.io -u np22jpg -p ${{ secrets.DOCKER_PASSWORD }}
           echo "${{ env.COSIGN_PRIVATE_KEY }}" > cosign.key;
           wc -c cosign.key;
           cosign sign -y --key cosign.key docker.io/np22jpg/${{ steps.build-image.outputs.image }}@${DOCKER_TAGS};
