@@ -55,7 +55,7 @@ jobs:
       - name: Copy Podman Credentials
         run:  cat ${XDG_RUNTIME_DIR}/containers/auth.json > ~/.docker/config.json
       
-      - uses: sigstore/cosign-installer@v3.0.1 
+      - uses: sigstore/cosign-installer@v3.0.2 
       - name: Sign the images
         run:  |
           echo "${{ env.COSIGN_PRIVATE_KEY }}" > cosign.key;
