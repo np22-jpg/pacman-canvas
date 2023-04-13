@@ -58,6 +58,7 @@ jobs:
       - uses: sigstore/cosign-installer@v3.0.2 
       - name: Sign the images
         run:  |
+          cosign login docker.io -u np22jpg -p ${{ secrets.DOCKER_PASSWORD }}
           echo "${{ env.COSIGN_PRIVATE_KEY }}" > cosign.key;
           wc -c cosign.key;
           cosign sign -y --key cosign.key docker.io/np22jpg/${{ steps.build-image.outputs.image }}@${DOCKER_TAGS};
