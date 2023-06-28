@@ -55,7 +55,7 @@ jobs:
       - name: Copy Podman Credentials
         run:  cat ${XDG_RUNTIME_DIR}/containers/auth.json > ~/.docker/config.json
       
-      - uses: sigstore/cosign-installer@v3.1.0 
+      - uses: sigstore/cosign-installer@v3.1.1 
       - name: Sign the images
         run:  |
           cosign login docker.io -u np22jpg -p ${{ secrets.DOCKER_PASSWORD }}
