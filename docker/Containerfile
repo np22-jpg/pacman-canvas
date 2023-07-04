@@ -13,4 +13,6 @@ WORKDIR /app
 HEALTHCHECK --interval=5s --timeout=3s --start-period=5s \
   CMD curl -f http://localhost:8080
 
+EXPOSE 8080
+
 ENTRYPOINT ["node", "server.js"]
