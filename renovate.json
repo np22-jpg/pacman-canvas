@@ -1,0 +1,28 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "config:best-practices",
+    ":automergeDigest",
+    ":semanticCommits",
+    ":automergeMinor",
+    ":enableVulnerabilityAlerts",
+    ":rebaseStalePrs"
+  ],
+  "forkProcessing": "enabled",
+  "packageRules": [
+    {
+      "description": "Automerge updates",
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    }
+  ],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
+  "github-actions": {
+    "enabled": true,
+    "automerge": true
+  }
+}
