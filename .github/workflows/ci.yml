@@ -1,4 +1,4 @@
-name: Build and Push to Docker Hub
+name: Build and Push to GHCR
 
 on:
   pull_request:
@@ -26,11 +26,10 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
       - name: Build Production Images
-        if: github.event_name != 'pull_request'
         id: build-image
         uses: redhat-actions/buildah-build@b4dc19b4ba891854660ab1f88a097d45aa158f76 # v2
         with:
-          image: ${{ env.REPO }}
+          image: pacman
           tags: latest ${{ github.sha }}
           containerfiles: |
             ./Containerfile
@@ -38,6 +37,7 @@ jobs:
       # PUSH
 
       - name: Push To GHCR
+        if: github.event_name != 'pull_request'
         id: push-to-ghcr
         uses: redhat-actions/push-to-registry@9986a6552bc4571882a4a67e016b17361412b4df # v2
         with:
@@ -49,8 +49,10 @@ jobs:
 
       # SIGN
       - uses: sigstore/cosign-installer@9614fae9e5c5eddabb09f90a270fcb487c9f7149 # v3.3.0
+        if: github.event_name != 'pull_request'
 
       - name: Sign GHCR Image
+        if: github.event_name != 'pull_request'
         run: |
           cosign login ghcr.io -u ${{ github.actor }} -p ${{ github.token }}
           cosign sign -y --key env://COSIGN_PRIVATE_KEY ghcr.io/${{ github.repository_owner }}/${{ steps.build-image.outputs.image }}@${GHCR_TAGS}
@@ -60,5 +62,6 @@ jobs:
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
 
       - name: Print image URLs
+        if: github.event_name != 'pull_request'
         run: |
           echo "Image pushed to ${{ steps.push-to-ghcr.outputs.registry-paths }}"
