@@ -18,3 +18,12 @@ app.get('/', function (req, res, next) {
 var PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => console.log('Server started at http://localhost:' + PORT));
+
+// https://expressjs.com/en/advanced/healthcheck-graceful-shutdown.html
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
+
+function shutdown() {
+  console.log("SIGTERM signal received: closing HTTP server");
+  process.exit(0);
+}
