@@ -11,7 +11,7 @@ COPY ./ ./
 
 
 
-FROM  quay.io/sclorg/nodejs-20-minimal-c9s@sha256:26c2f0729c52e053a3cb8935213179ca287b56dd448965bcd4272c75c92201d6 AS release
+FROM  quay.io/sclorg/nodejs-20-minimal-c9s@sha256:1088e8680aefaf2fb7536f900f2695b45f8cbe0220b795cbb3ce9f5e955aa128 AS release
 
 LABEL maintainer="TitaniumNetwork Ultraviolet Team"
 LABEL summary="Ultraviolet Proxy Image"
