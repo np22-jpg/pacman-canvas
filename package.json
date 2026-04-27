@@ -24,7 +24,7 @@
   "devDependencies": {
     "jest": "29.7.0",
     "webpack": "5.106.2",
-    "webpack-cli": "5.1.4",
+    "webpack-cli": "7.0.2",
     "webpack-dev-server": "4.15.2"
   }
 }
